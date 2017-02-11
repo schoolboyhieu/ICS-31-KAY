@@ -1,0 +1,116 @@
+
+#Hieu Dao-Tran 24353293 and Kelsey Lee 41441338. Lab Sec 5. Assignment 9
+from datetime import *
+def bandb(doc: str):
+    '''Takes in txt document and returns accordingly due to command'''
+    infile = open(doc, 'r')
+    sample = infile.read()
+    inputlist = sample.split('\n')
+    finalrooms = []
+    exlist = []
+    newlist = []
+    reservation_room_num = []
+    arriving = []
+    departing = []
+    guest = []
+    numbers = []
+    confirmation_num = 1
+    for string in inputlist:
+        exlist.append(string.strip(' '))
+    for letters in exlist:
+        newlist.append(letters[:2].upper() + letters[2:])
+    for word in newlist:
+        if word[:2] == 'PL':
+            print(word[3:])
+        elif word[:2] == 'LB':
+            list_bedroom(finalrooms)
+        elif word[:2] == 'NB':
+            finalrooms.append(int(word[2:].strip(' ')))
+        elif word[:2] == 'RB':
+            if int(word[2:].strip(' ')) not in finalrooms:
+                print("Sorry, can't delete room", int(word[2:].strip(' ')),
+                      '; it is not in service now.')
+            elif int(word[2:].strip(' ')) in finalrooms:
+                finalrooms.remove(int(word[2:].strip(' ')))
+        elif word[:2] == 'NR':
+            if int(word[2:6].strip(' ')) in finalrooms:
+                split_word = word[2:].split()
+                darrive = split_word[1].split('/')
+                d_arrive = datetime(int(darrive[2]), int(darrive[0]), int(darrive[1]))
+                depart = split_word[2].split('/')
+                de_part = datetime(int(depart[2]), int(depart[0]), int(depart[1]))
+                if d_arrive > de_part:
+                    print("Sorry, can't reserve room", split_word[0],
+                          '(', split_word[1], 'to', split_word[2],
+                          "); \n can't leave before you arrive.")
+                elif d_arrive == de_part:
+                    print("Sorry, can't reserve room", split_word[0],
+                          '(', split_word[1], 'to', split_word[2],
+                          "); \n can't arrive and leave the same day.")
+                elif word[2:6].strip(' ') in reservation_room_num:
+                    pass
+                                            
+                else:
+                    reservation_room_num.append(split_word[0])
+                    arriving.append(split_word[1])
+                    departing.append(split_word[2])
+                    guest.append((' ').join(split_word[3:]))
+                    numbers.append(confirmation_num)
+                    print('Reserving room', split_word[0],
+                          'for', (' ').join(split_word[3:]), '-- Confirmation #', confirmation_num,
+                          '\n (arriving', split_word[1], ',departing',
+                          split_word[2],')')
+                    confirmation_num +=1
+                
+
+            elif int(word[2:6].strip(' ')) not in finalrooms:
+                print("Sorry; can't reserve room", int(word[2:6].strip(' ')),
+                      "; room not in service")
+            
+        elif word[:2] == 'LR':
+            print('Number of reservations:', len(reservation_room_num))
+            print('No. Rm. Arrive     Depart     Guest')
+            print('----------------------------------------------------')
+            for index in range(len(reservation_room_num)):
+                print('{:3d} {:3s} {:>10s} {:>10s} {}'.format(numbers[index],
+                                                              reservation_room_num[index].strip(' '),
+                                                              arriving[index].strip(' '),
+                                                              departing[index].strip(' '),
+                                                              guest[index].strip(' ')))
+        elif word[:2] == 'RR':
+            del_room_num = int(word[3:].strip(' '))
+            
+            if del_room_num in numbers:
+                index = numbers.index(del_room_num)
+                del numbers[index]
+                del reservation_room_num[index]
+                del arriving[index]
+                del departing[index]
+                del guest[index]
+            elif word[2:].strip(' ') not in numbers:
+                print("Sorry, can't cancel reservation; no confirmation number",
+                       word[2:].strip(' '))
+            
+                
+                        
+def list_bedroom(l:list):
+    print('Number of rooms in service:', len(l))
+    print('---------------------------------------------')
+    for num in l:
+        print(num)
+    return
+print('STAGE 1 --------------------------------------------------')
+print()
+bandb('inputsample.txt')
+print()
+print('STAGE 2  --------------------------------------------------')
+print()
+bandb('Stage2.txt')
+print()
+print('STAGE 3  --------------------------------------------------')
+print()
+bandb('Stage3.txt')
+print()
+print('STAGE 4 ----------------------------------------------------')
+print()
+bandb('Stage4.txt')
