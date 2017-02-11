@@ -1,5 +1,5 @@
 # Jonathan Gieg 77804954 and Hieu Dao-Tran 24353293 ICS 31 Lab Assignment 2
-
+git add doc / lab_2_folder
 
 print('How many hours?')
 hours = float(input())
